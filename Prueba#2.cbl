@@ -94,7 +94,8 @@
                    ACCEPT NOMBRE(IDX_EMPLEADO)
 
                    IF NOMBRE(IDX_EMPLEADO) IS ALPHABETIC AND
-                      FUNCTION LENGTH(NOMBRE(IDX_EMPLEADO)) > 10
+                      FUNCTION LENGTH(NOMBRE(IDX_EMPLEADO)) > 10 AND
+                      NOMBRE(IDX_EMPLEADO) NOT = SPACES
                       THEN
                       MOVE 'S' TO WS-BANDERA
                    ELSE
@@ -165,20 +166,13 @@
                DISPLAY "INGRESE SU NIVEL-EDUCATIVO"
                ACCEPT NIVEL-EDUCATIVO(IDX_EMPLEADO)
 
-
-               IF NIVEL-EDUCATIVO(IDX_EMPLEADO) = SPACES OR
-                   NIVEL-EDUCATIVO(IDX_EMPLEADO) = ' ' THEN
-                   MOVE 'NA' TO NIVEL-EDUCATIVO(IDX_EMPLEADO)
-               END-IF
-
                IF NIVEL-EDUCATIVO(IDX_EMPLEADO) IS ALPHABETIC AND
-                   FUNCTION LENGTH(NIVEL-EDUCATIVO(IDX_EMPLEADO)) > 0
+                   NIVEL-EDUCATIVO(IDX_EMPLEADO) NOT = SPACES
                    THEN
                    MOVE 'S' TO WS-BANDERA
                ELSE
-                   DISPLAY SPACE
-                   DISPLAY "NIVEL EDUCATIVO NO VALIDO"
-                   DISPLAY SPACE
+                   MOVE 'NA' TO NIVEL-EDUCATIVO(IDX_EMPLEADO)
+                    MOVE 'S' TO WS-BANDERA
                END-IF
 
            END-PERFORM
@@ -192,20 +186,13 @@
                DISPLAY "INGRESE EL TIPO DE VIVIENDA:"
                ACCEPT TIPO-VIVIENDA(IDX_EMPLEADO)
 
-
-               IF TIPO-VIVIENDA(IDX_EMPLEADO) = SPACES OR
-                   TIPO-VIVIENDA(IDX_EMPLEADO) = ' ' THEN
-                   MOVE 'NA' TO TIPO-VIVIENDA(IDX_EMPLEADO)
-               END-IF
-
                IF TIPO-VIVIENDA(IDX_EMPLEADO) IS ALPHABETIC AND
-                   FUNCTION LENGTH(TIPO-VIVIENDA(IDX_EMPLEADO)) > 5
+                   TIPO-VIVIENDA(IDX_EMPLEADO) NOT = SPACES
                    THEN
                    MOVE 'S' TO WS-BANDERA
                ELSE
-                   DISPLAY SPACE
-                   DISPLAY "TIPO DE VIVIENDA NO VALIDO"
-                   DISPLAY SPACE
+                   MOVE 'NA' TO TIPO-VIVIENDA(IDX_EMPLEADO)
+                    MOVE 'S' TO WS-BANDERA
                END-IF
            END-PERFORM
 
@@ -486,20 +473,147 @@
                  PERFORM 1000-MENU-PROGRAMA
            END-IF.
 
-
-
-
-
-
-
-
-
-
        7000-FILTRO-NIVEL-EDUCATIVO.
-            DISPLAY "FILTRO NIVEL EDUCATIVO".
+                       IF WS-CONTADOR > 0 THEN
+
+                  MOVE 'N' TO WS-BANDERA
+
+      * VALIDACION INGRESO SALARIO-NETO
+               PERFORM UNTIL WS-BANDERA = 'S'
+                   DISPLAY "INGRESE EL SALARIO NETO QUE RECIBE:"
+                   ACCEPT WS-SALARIO-NETO-BUSQUEDA
+
+                   IF WS-SALARIO-NETO-BUSQUEDA IS NUMERIC AND
+                      WS-SALARIO-NETO-BUSQUEDA > 10 THEN
+                      MOVE 'S' TO WS-BANDERA
+                   ELSE
+                      DISPLAY SPACE
+                      DISPLAY "SALARIO NO VALIDO"
+                      DISPLAY SPACE
+                   END-IF
+               END-PERFORM
+
+            MOVE 'N' TO WS-BANDERA
+
+            PERFORM UNTIL WS-INDICE > WS-CONTADOR OR WS-BANDERA = 'S'
+
+            IF SALARIO-NETO(IDX_EMPLEADO) = WS-SALARIO-NETO-BUSQUEDA
+              THEN
+                  DISPLAY "NOMBRES : " NOMBRE(IDX_EMPLEADO)
+                  DISPLAY "CEDULA : " ID-EMPLEADO(IDX_EMPLEADO)
+                  DISPLAY "SALARIO-BRUTO :" SALARIO-BRUTO(IDX_EMPLEADO)
+                  DISPLAY "SALARIO-NETO :" SALARIO-NETO(IDX_EMPLEADO)
+            DISPLAY
+            "DEDUCCION-IMPUESTOS :"DEDUCCION-IMPUESTOS(IDX_EMPLEADO)
+            DISPLAY "DEDUCCION-SEGURO :" DEDUCCION-SEGURO(IDX_EMPLEADO)
+            DISPLAY "NIVEL-EDUCATIVO :" NIVEL-EDUCATIVO(IDX_EMPLEADO)
+            DISPLAY "TIPO-VIVIENDA :" TIPO-VIVIENDA(IDX_EMPLEADO)
+            DISPLAY
+            "NUMERO-DORMITORIOS :" NUMERO-DORMITORIOS(IDX_EMPLEADO)
+             DISPLAY
+            "NUMERO-VEHICULOS :" NUMERO-VEHICULOS(IDX_EMPLEADO)
+
+            ADD 1 TO WS-INDICE
+
+            IF WS-INDICE = 20 THEN
+                 MOVE 'S' TO WS-BANDERA
+
+             DISPLAY "DESEA BUSCAR OTRO EMPLEADO ? : SI o NO "
+             ACCEPT WS-SI-NO
+
+             EVALUATE WS-SI-NO
+             WHEN 'SI'
+                 PERFORM 6000-FILTRO-SALARIO
+             WHEN 'NO'
+                 PERFORM 1000-MENU-PROGRAMA
+             WHEN OTHER
+                 DISPLAY SPACE
+                 DISPLAY "OPCION NO VALIDA, VOLVIENDO AL MENU PRINCIPAL"
+                 DISPLAY SPACE
+                 PERFORM 1000-MENU-PROGRAMA
+             END-EVALUATE
+            END-IF
+
+            END-PERFORM
+            ELSE
+                 DISPLAY SPACE
+                 DISPLAY
+                 "NO HAY REGISTROS GUARDADOS, REGRESANDO AL MENU"
+                 DISPLAY SPACE
+                 PERFORM 1000-MENU-PROGRAMA
+           END-IF.
+
 
        8000-FILTRO-AMBOS.
-            DISPLAY "FILTRO AMBOS".
+            DISPLAY "FILTRO AMBOS".            IF WS-CONTADOR > 0 THEN
+
+                  MOVE 'N' TO WS-BANDERA
+
+      * VALIDACION INGRESO SALARIO-NETO
+               PERFORM UNTIL WS-BANDERA = 'S'
+                   DISPLAY "INGRESE EL SALARIO NETO QUE RECIBE:"
+                   ACCEPT WS-SALARIO-NETO-BUSQUEDA
+
+                   IF WS-SALARIO-NETO-BUSQUEDA IS NUMERIC AND
+                      WS-SALARIO-NETO-BUSQUEDA > 10 THEN
+                      MOVE 'S' TO WS-BANDERA
+                   ELSE
+                      DISPLAY SPACE
+                      DISPLAY "SALARIO NO VALIDO"
+                      DISPLAY SPACE
+                   END-IF
+               END-PERFORM
+
+            MOVE 'N' TO WS-BANDERA
+
+            PERFORM UNTIL WS-INDICE > WS-CONTADOR OR WS-BANDERA = 'S'
+
+            IF SALARIO-NETO(IDX_EMPLEADO) = WS-SALARIO-NETO-BUSQUEDA
+              THEN
+                  DISPLAY "NOMBRES : " NOMBRE(IDX_EMPLEADO)
+                  DISPLAY "CEDULA : " ID-EMPLEADO(IDX_EMPLEADO)
+                  DISPLAY "SALARIO-BRUTO :" SALARIO-BRUTO(IDX_EMPLEADO)
+                  DISPLAY "SALARIO-NETO :" SALARIO-NETO(IDX_EMPLEADO)
+            DISPLAY
+            "DEDUCCION-IMPUESTOS :"DEDUCCION-IMPUESTOS(IDX_EMPLEADO)
+            DISPLAY "DEDUCCION-SEGURO :" DEDUCCION-SEGURO(IDX_EMPLEADO)
+            DISPLAY "NIVEL-EDUCATIVO :" NIVEL-EDUCATIVO(IDX_EMPLEADO)
+            DISPLAY "TIPO-VIVIENDA :" TIPO-VIVIENDA(IDX_EMPLEADO)
+            DISPLAY
+            "NUMERO-DORMITORIOS :" NUMERO-DORMITORIOS(IDX_EMPLEADO)
+             DISPLAY
+            "NUMERO-VEHICULOS :" NUMERO-VEHICULOS(IDX_EMPLEADO)
+
+            ADD 1 TO WS-INDICE
+
+            IF WS-INDICE = 20 THEN
+                 MOVE 'S' TO WS-BANDERA
+
+             DISPLAY "DESEA BUSCAR OTRO EMPLEADO ? : SI o NO "
+             ACCEPT WS-SI-NO
+
+             EVALUATE WS-SI-NO
+             WHEN 'SI'
+                 PERFORM 6000-FILTRO-SALARIO
+             WHEN 'NO'
+                 PERFORM 1000-MENU-PROGRAMA
+             WHEN OTHER
+                 DISPLAY SPACE
+                 DISPLAY "OPCION NO VALIDA, VOLVIENDO AL MENU PRINCIPAL"
+                 DISPLAY SPACE
+                 PERFORM 1000-MENU-PROGRAMA
+             END-EVALUATE
+            END-IF
+
+            END-PERFORM
+            ELSE
+                 DISPLAY SPACE
+                 DISPLAY
+                 "NO HAY REGISTROS GUARDADOS, REGRESANDO AL MENU"
+                 DISPLAY SPACE
+                 PERFORM 1000-MENU-PROGRAMA
+           END-IF.
+
 
 
 
